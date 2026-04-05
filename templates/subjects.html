@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Subjects | {{ site_settings.site_name|default:'Master CBC' }}{% endblock %}
+
+{% block Content %}
+<section class="lms-section pt-2">
+  <div class="lms-section-header">
+    <div>
+      <span class="lms-kicker">Subjects List</span>
+      <h2>Browse all learning areas</h2>
+      <p class="lms-muted mb-0">After assignments are submitted, learners return here to keep moving through the platform.</p>
+    </div>
+    <a href="{% url 'myapp:home_page' %}" class="lms-btn lms-btn-outline">Back to Home</a>
+  </div>
+
+  <div class="lms-grid-3">
+    {% for subject in subjects %}
+      <article class="lms-card lms-subject-card">
+        {% if subject.image %}
+          <img src="{{ subject.image.url }}" alt="{{ subject.name }}" class="lms-subject-thumb mb-3">
+        {% else %}
+          <img src="{% static 'assets/img/subjects/geo.jpg' %}" alt="{{ subject.name }}" class="lms-subject-thumb mb-3">
+        {% endif %}
+        <h3 class="h4 mb-2">{{ subject.name }}</h3>
+        <p class="lms-muted">{{ subject.description|truncatewords:24 }}</p>
+        <div class="lms-meta">
+          <span class="lms-chip"><i class="bi bi-person"></i> {{ subject.teacher_display_name }}</span>
+          {% if subject.notes_pdf %}
+            <span class="lms-chip"><i class="bi bi-file-earmark-pdf"></i> PDF notes</span>
+          {% endif %}
+        </div>
+        <a href="{% url 'myapp:subject_detail' subject.id %}" class="lms-btn lms-btn-primary mt-2">View Subject</a>
+      </article>
+    {% empty %}
+      <div class="lms-empty">No subjects are available yet.</div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

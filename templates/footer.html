@@ -1,0 +1,48 @@
+<footer id="footer" class="footer mt-5">
+  <div class="container footer-top py-5">
+    <div class="row gy-4">
+      <div class="col-lg-4 col-md-6 footer-about">
+        <a href="{% url 'myapp:home_page' %}" class="logo d-flex align-items-center gap-2 text-decoration-none mb-3">
+          <span class="sitename">{{ site_settings.site_name|default:'Master CBC' }}</span>
+        </a>
+        <p>Helping schools coordinate subjects, assignments, notes, grading, and parent visibility in one place.</p>
+        <div class="footer-contact pt-2">
+          <p>Ngong Road</p>
+          <p>Nairobi, Kenya</p>
+          <p class="mt-2"><strong>Phone:</strong> <span>+254 702 784 039</span></p>
+          <p><strong>Email:</strong> <span>info@mastercbc.com</span></p>
+        </div>
+      </div>
+
+      <div class="col-lg-2 col-md-3 footer-links">
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="{% url 'myapp:home_page' %}">Home</a></li>
+          <li><a href="{% url 'myapp:subjects_page' %}">Subjects</a></li>
+          <li><a href="{% url 'myapp:about' %}">About</a></li>
+          <li><a href="{% url 'myapp:parent_portal' %}">Parent Portal</a></li>
+        </ul>
+      </div>
+
+      <div class="col-lg-3 col-md-3 footer-links">
+        <h4>Learning Tools</h4>
+        <ul>
+          <li><a href="{% url 'myapp:subjects_page' %}">Subject Notes</a></li>
+          <li><a href="{% url 'myapp:subjects_page' %}">Assignment Library</a></li>
+          <li><a href="{% url 'myapp:parent_portal' %}">Student Progress</a></li>
+          <li><a href="{% url 'myapp:teachers_dashboard' %}">Teacher Dashboard</a></li>
+        </ul>
+      </div>
+
+      <div class="col-lg-3 col-md-12 footer-links">
+        <h4>Platform Promise</h4>
+        <p class="mb-0">Rounded cards, clear grading, downloadable notes, and one dashboard for teachers, learners, and parents.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="container copyright text-center py-3">
+    <p class="mb-1"><span>Copyright</span> <strong class="px-1 sitename">{{ site_settings.site_name|default:'Master CBC' }}</strong> <span>All Rights Reserved</span></p>
+    <div class="credits">Built for a cleaner school workflow.</div>
+  </div>
+</footer>

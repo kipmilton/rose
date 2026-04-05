@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ site_settings.site_name|default:'Master CBC' }}{% endblock %}
+
+{% block Content %}
+<section id="call-to-action-2" class="call-to-action-2 section">
+  <div class="container">
+    <div class="advertise-1 d-flex flex-column flex-lg-row gap-4 align-items-center position-relative">
+      <div class="content-left flex-grow-1">
+        <span class="badge text-uppercase mb-2">Join Now</span>
+        <h2>Enhance Your Learning with Our LMS</h2>
+        <p class="my-4">Access a variety of subjects, submit assignments, and track your progress with ease. Join thousands of students improving their academic journey today.</p>
+
+        <div class="features d-flex flex-wrap gap-3 mb-4">
+          <div class="feature-item">
+            <i class="bi bi-check-circle-fill"></i>
+            <span>Interactive Learning</span>
+          </div>
+          <div class="feature-item">
+            <i class="bi bi-check-circle-fill"></i>
+            <span>Assignment Tracking</span>
+          </div>
+          <div class="feature-item">
+            <i class="bi bi-check-circle-fill"></i>
+            <span>Teacher Support</span>
+          </div>
+        </div>
+
+        <div class="cta-buttons d-flex flex-wrap gap-3">
+          <a href="{% url 'myapp:register' %}" class="btn btn-primary">Get Started</a>
+          <a href="{% url 'myapp:about' %}" class="btn btn-outline">More about us!</a>
+        </div>
+      </div>
+
+      <div class="content-right position-relative">
+        <img src="{% static 'assets/img/subjects/pisicc.jpg' %}" alt="LMS Platform" class="img-fluid rounded-4">
+        <div class="floating-card">
+          <div class="card-icon">
+            <i class="bi bi-mortarboard-fill"></i>
+          </div>
+          <div class="card-content">
+            <span class="stats-number">10K+</span>
+            <span class="stats-text">Active Students</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="decoration">
+        <div class="circle-1"></div>
+        <div class="circle-2"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="subjects-section" class="lms-section">
+  <div class="lms-section-header">
+    <div>
+      <span class="lms-kicker">Subjects</span>
+      <h2>Explore classroom subjects</h2>
+      <p class="lms-muted mb-0">Each card now shows the assigned teacher and links to notes, details, and questions.</p>
+    </div>
+    <a href="{% url 'myapp:subjects_page' %}" class="lms-btn lms-btn-outline">View Subjects List</a>
+  </div>
+
+  <div class="lms-grid-3">
+    {% for subject in subjects %}
+      <article class="lms-card lms-subject-card">
+        {% if subject.image %}
+          <img src="{{ subject.image.url }}" alt="{{ subject.name }}" class="lms-subject-thumb mb-3">
+        {% else %}
+          <img src="{% static 'assets/img/subjects/math.jpg' %}" alt="{{ subject.name }}" class="lms-subject-thumb mb-3">
+        {% endif %}
+        <div class="d-flex justify-content-between align-items-start gap-3 mb-2">
+          <h3 class="h4 mb-0">{{ subject.name }}</h3>
+          {% if subject.notes_pdf %}
+            <span class="lms-chip"><i class="bi bi-file-earmark-pdf"></i> Notes</span>
+          {% endif %}
+        </div>
+        <p class="lms-muted mb-3">{{ subject.description|truncatewords:20 }}</p>
+        <div class="lms-meta">
+          <span class="lms-chip"><i class="bi bi-person-badge"></i> {{ subject.teacher_display_name }}</span>
+        </div>
+        <a href="{% url 'myapp:subject_detail' subject.id %}" class="lms-btn lms-btn-primary mt-2">Open Subject</a>
+      </article>
+    {% empty %}
+      <div class="lms-empty">No subjects have been added yet.</div>
+    {% endfor %}
+  </div>
+</section>
+
+<section id="latest-assignments" class="lms-section">
+  <div class="lms-section-header">
+    <div>
+      <span class="lms-kicker">Assignments</span>
+      <h2>Latest assignments</h2>
+      <p class="lms-muted mb-0">Cleaner cards, clearer actions, and quick access into each assignment.</p>
+    </div>
+  </div>
+
+  <div class="lms-grid-3">
+    {% for assignment in assignments %}
+      <article class="lms-card lms-assignment-card">
+        {% if assignment.subject.image %}
+          <img src="{{ assignment.subject.image.url }}" alt="{{ assignment.subject.name }}" class="lms-assignment-thumb mb-3">
+        {% else %}
+          <img src="{% static 'assets/img/subjects/chem.jpg' %}" alt="{{ assignment.subject.name }}" class="lms-assignment-thumb mb-3">
+        {% endif %}
+        <span class="lms-chip">{{ assignment.subject.name }}</span>
+        <h3 class="h4 mt-3 mb-2">{{ assignment.title }}</h3>
+        <p class="lms-muted">{{ assignment.description|truncatewords:20 }}</p>
+        <div class="lms-meta">
+          <span class="lms-chip"><i class="bi bi-person"></i> {{ assignment.teacher_display_name }}</span>
+          <span class="lms-chip"><i class="bi bi-clock"></i> {{ assignment.due_date|date:'M d, Y H:i' }}</span>
+        </div>
+        <a href="{% url 'myapp:assignment_detail' assignment.id %}" class="lms-btn lms-btn-primary mt-2">Start Assignment</a>
+      </article>
+    {% empty %}
+      <div class="lms-empty">No assignments are available yet.</div>
+    {% endfor %}
+  </div>
+</section>
+
+<section id="completed-assignments" class="lms-section">
+  <div class="lms-section-header">
+    <div>
+      <span class="lms-kicker">Recently Graded</span>
+      <h2>Latest completed assignments</h2>
+    </div>
+  </div>
+
+  <div class="lms-card p-3 p-md-4">
+    <div class="table-responsive">
+      <table class="lms-table">
+        <thead>
+          <tr>
+            <th>Student</th>
+            <th>Subject</th>
+            <th>Date Submitted</th>
+            <th>Grade Awarded</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for submission in latest_done_assignments %}
+            <tr>
+              <td>{{ submission.student.username }}</td>
+              <td>{{ submission.assignment.subject.name }}</td>
+              <td>{{ submission.submitted_at|date:'M d, Y' }}</td>
+              <td>{{ submission.grade|default:'Not graded yet' }}</td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="4" class="lms-muted">No completed assignments yet.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="lms-section">
+  <div class="lms-card p-4 p-lg-5">
+    <div class="row align-items-center g-4">
+      <div class="col-lg-7">
+        <span class="lms-kicker">Parent Portal</span>
+        <h2 class="mt-3">Give families a quick view of learner progress</h2>
+        <p class="lms-muted mb-0">The new parent portal works with a student username search and shows subjects, grades, scores, and progress in a simple view.</p>
+      </div>
+      <div class="col-lg-5 text-lg-end">
+        <a href="{% url 'myapp:parent_portal' %}" class="lms-btn lms-btn-warm">Open Parent Access</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="latest-education-updates" class="lms-section">
+  <div class="lms-section-header">
+    <div>
+      <span class="lms-kicker">Latest Updates</span>
+      <h2>System updates and education posts</h2>
+      <p class="lms-muted mb-0">Managed from the teacher dashboard.</p>
+    </div>
+  </div>
+
+  <div class="row g-4 mb-4">
+    <div class="col-lg-4">
+      <div class="lms-card lms-update-card h-100">
+        <h3 class="h4 mb-3">Latest Updates</h3>
+        {% for update in system_updates %}
+          <div class="pb-3 mb-3 border-bottom">
+            <h4 class="h6 fw-bold mb-1">{{ update.title }}</h4>
+            <p class="lms-muted mb-1">{{ update.content|truncatewords:18 }}</p>
+            <small class="lms-muted">{{ update.published_at|date:'M d, Y' }}</small>
+          </div>
+        {% empty %}
+          <div class="lms-empty">No system updates published yet.</div>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="col-lg-8">
+      <div class="lms-grid-2">
+        {% for post in blog_posts %}
+          <article class="lms-card lms-update-card">
+            {% if post.image %}
+              <img src="{{ post.image.url }}" alt="{{ post.title }}" class="lms-post-thumb mb-3">
+            {% endif %}
+            <span class="lms-chip">{{ post.category }}</span>
+            <h3 class="h4 mt-3 mb-2">{{ post.title }}</h3>
+            <p class="lms-muted mb-2">{{ post.excerpt|truncatewords:22 }}</p>
+            <small class="lms-muted">{{ post.published_at|date:'M d, Y' }}</small>
+          </article>
+        {% empty %}
+          <div class="lms-empty">No blog posts available yet.</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

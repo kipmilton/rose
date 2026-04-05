@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}Grade Submission | {{ site_settings.site_name|default:'Master CBC' }}{% endblock %}
+
+{% block Content %}
+<section class="lms-section pt-2">
+  <div class="row g-4">
+    <div class="col-lg-5">
+      <div class="lms-card p-4 h-100">
+        <span class="lms-kicker">Grading</span>
+        <h2 class="h3 mt-3">Grade learner work</h2>
+        <p class="mb-2"><strong>Student:</strong> {{ submission.student.username }}</p>
+        <p class="mb-2"><strong>Assignment:</strong> {{ submission.assignment.title }}</p>
+        <p class="mb-3"><strong>Subject:</strong> {{ submission.assignment.subject.name }}</p>
+        {% if submission.image %}
+          <a href="{{ submission.image.url }}" class="lms-btn lms-btn-outline" target="_blank">Open Submission File</a>
+        {% endif %}
+      </div>
+    </div>
+    <div class="col-lg-7">
+      <div class="lms-card lms-form-panel">
+        <h2 class="h3 mb-3">Select a grading category</h2>
+        <div class="lms-grid mb-4">
+          {% for value, label in grading_guide %}
+            <div class="lms-grade-option">
+              <strong>{{ label }}</strong>
+            </div>
+          {% endfor %}
+        </div>
+        <form method="post">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit" class="lms-btn lms-btn-primary">Submit Grade</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

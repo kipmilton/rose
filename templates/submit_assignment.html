@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Submit Assignment | {{ site_settings.site_name|default:'Master CBC' }}{% endblock %}
+
+{% block Content %}
+<section class="lms-section pt-2">
+  <div class="row g-4">
+    <div class="col-lg-5">
+      <div class="lms-card p-4 h-100">
+        <span class="lms-kicker">Submission</span>
+        <h2 class="h3 mt-3">{{ assignment.title }}</h2>
+        <p class="lms-muted">Upload your work here. PDF, image, or document files are all supported through the existing submission field.</p>
+        <div class="lms-meta">
+          <span class="lms-chip">{{ assignment.subject.name }}</span>
+          <span class="lms-chip">{{ assignment.teacher_display_name }}</span>
+        </div>
+        {% if submission.image %}
+          <p class="mt-3 mb-2"><strong>Current file:</strong></p>
+          <a href="{{ submission.image.url }}" class="lms-btn lms-btn-outline" target="_blank">View Uploaded Work</a>
+        {% endif %}
+      </div>
+    </div>
+    <div class="col-lg-7">
+      <div class="lms-card lms-form-panel">
+        <h2 class="h3 mb-3">Upload your assignment</h2>
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <div class="d-flex flex-wrap gap-3 mt-3">
+            <button type="submit" class="lms-btn lms-btn-primary">Submit Assignment</button>
+            <a href="{% url 'myapp:subjects_page' %}" class="lms-btn lms-btn-outline">Back to Subjects</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

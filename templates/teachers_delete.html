@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block title %}Delete Records | {{ site_settings.site_name|default:'Master CBC' }}{% endblock %}
+
+{% block Content %}
+<section class="lms-section pt-2">
+  <div class="lms-grid-2">
+    <div class="lms-card p-4">
+      <div class="lms-section-header">
+        <div>
+          <span class="lms-kicker">Subjects</span>
+          <h2 class="h3">Delete subjects</h2>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <table class="lms-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Subject</th>
+              <th>Teacher</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for subject in subjects %}
+              <tr>
+                <td>{{ subject.id }}</td>
+                <td>{{ subject.name }}</td>
+                <td>{{ subject.teacher_display_name }}</td>
+                <td>
+                  <form action="{% url 'myapp:delete_subject' subject.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="lms-btn lms-btn-warm" onclick="return confirm('Delete this subject?');">Delete</button>
+                  </form>
+                </td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="4" class="lms-muted">No subjects available.</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="lms-card p-4">
+      <div class="lms-section-header">
+        <div>
+          <span class="lms-kicker">Assignments</span>
+          <h2 class="h3">Delete assignments</h2>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <table class="lms-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Assignment</th>
+              <th>Subject</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for assignment in assignments %}
+              <tr>
+                <td>{{ assignment.id }}</td>
+                <td>{{ assignment.title }}</td>
+                <td>{{ assignment.subject.name }}</td>
+                <td>
+                  <form action="{% url 'myapp:delete_assignment' assignment.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="lms-btn lms-btn-warm" onclick="return confirm('Delete this assignment?');">Delete</button>
+                  </form>
+                </td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="4" class="lms-muted">No assignments available.</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

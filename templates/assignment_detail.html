@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}{{ assignment.title }} | {{ site_settings.site_name|default:'Master CBC' }}{% endblock %}
+
+{% block Content %}
+<section class="lms-section pt-2">
+  <div class="lms-card p-4 p-lg-5">
+    <div class="row g-4 align-items-start">
+      <div class="col-lg-8">
+        <span class="lms-kicker">Assignment</span>
+        <h1 class="display-6 fw-bold mt-3">{{ assignment.title }}</h1>
+        <p class="lms-muted mb-4">{{ assignment.description }}</p>
+        <div class="lms-meta">
+          <span class="lms-chip"><i class="bi bi-book"></i> {{ assignment.subject.name }}</span>
+          <span class="lms-chip"><i class="bi bi-person"></i> {{ assignment.teacher_display_name }}</span>
+          <span class="lms-chip"><i class="bi bi-clock-history"></i> Due {{ assignment.due_date|date:'M d, Y H:i' }}</span>
+        </div>
+        {% if assignment.file %}
+          <a href="{{ assignment.file.url }}" class="lms-btn lms-btn-outline mt-3" download>
+            <i class="bi bi-download"></i>
+            Download Assignment File
+          </a>
+        {% endif %}
+      </div>
+      <div class="col-lg-4">
+        <div class="lms-soft-card p-4 h-100">
+          <h2 class="h4">Ready to work?</h2>
+          <p class="lms-muted">Use the action below to upload your work. If you have already submitted, you can replace the file from the submission page.</p>
+          {% if existing_submission and existing_submission.image %}
+            <p class="mb-3"><strong>Current submission:</strong> {{ existing_submission.status }}</p>
+          {% endif %}
+          <div class="d-flex flex-wrap gap-3">
+            <a href="{% url 'myapp:submit_assignment' assignment.id %}" class="lms-btn lms-btn-primary">Start Assignment</a>
+            <a href="{% url 'myapp:home_page' %}" class="lms-btn lms-btn-outline">Back to Home</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

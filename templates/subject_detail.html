@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ subject.name }} | {{ site_settings.site_name|default:'Master CBC' }}{% endblock %}
+
+{% block Content %}
+<section class="lms-section pt-2">
+  <div class="lms-card p-4 p-lg-5">
+    <div class="row g-4 align-items-start">
+      <div class="col-lg-5">
+        {% if subject.image %}
+          <img src="{{ subject.image.url }}" alt="{{ subject.name }}" class="lms-subject-thumb">
+        {% else %}
+          <img src="{% static 'assets/img/subjects/math.jpg' %}" alt="{{ subject.name }}" class="lms-subject-thumb">
+        {% endif %}
+      </div>
+      <div class="col-lg-7">
+        <span class="lms-kicker">Subject Details</span>
+        <h1 class="display-6 fw-bold mt-3">{{ subject.name }}</h1>
+        <p class="lms-muted">{{ subject.description }}</p>
+        <div class="lms-meta">
+          <span class="lms-chip"><i class="bi bi-person-badge"></i> {{ subject.teacher_display_name }}</span>
+          {% if subject.notes_pdf %}
+            <span class="lms-chip"><i class="bi bi-file-earmark-pdf"></i> Notes ready</span>
+          {% endif %}
+        </div>
+        <div class="d-flex flex-wrap gap-3 mt-4">
+          {% if subject.notes_pdf %}
+            <a href="{{ subject.notes_pdf.url }}" class="lms-btn lms-btn-primary" download>Download Notes (PDF)</a>
+          {% endif %}
+          <a href="{% url 'myapp:subjects_page' %}" class="lms-btn lms-btn-outline">Back to Subjects</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="lms-section">
+  <div class="lms-section-header">
+    <div>
+      <span class="lms-kicker">Ask a Question</span>
+      <h2>Send your teacher a question about {{ subject.name }}</h2>
+      <p class="lms-muted mb-0">Questions are stored in the database and shown to teachers inside the admin dashboard. Teacher replies will appear here the next time you open this subject.</p>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-6">
+      <div class="lms-card lms-form-panel">
+        {% if user.is_authenticated %}
+          <form method="post">
+            {% csrf_token %}
+            {{ question_form.as_p }}
+            <button type="submit" class="lms-btn lms-btn-primary">Send Question / Follow-up</button>
+          </form>
+        {% else %}
+          <div class="lms-empty">Please <a href="{% url 'myapp:login_page' %}">log in</a> to ask a question.</div>
+        {% endif %}
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="lms-card p-4 h-100">
+        <h3 class="h4 mb-3">Your question history</h3>
+        {% if user.is_authenticated %}
+          <div class="d-grid gap-3">
+            {% for question in question_history %}
+              <div class="lms-soft-card p-3">
+                <p class="mb-2"><strong>You asked:</strong> {{ question.question_text }}</p>
+                <p class="small lms-muted mb-2">{{ question.created_at|date:'M d, Y H:i' }}</p>
+                {% if question.teacher_response %}
+                  <div class="border-top pt-3 mt-3">
+                    <p class="mb-2"><strong>Teacher response:</strong> {{ question.teacher_response }}</p>
+                    {% if question.responded_at %}
+                      <p class="small lms-muted mb-0">{{ question.responded_at|date:'M d, Y H:i' }}</p>
+                    {% endif %}
+                  </div>
+                {% else %}
+                  <p class="mb-0 lms-muted">Waiting for teacher response.</p>
+                {% endif %}
+              </div>
+            {% empty %}
+              <div class="lms-empty">No questions asked yet for this subject.</div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="lms-empty">Log in to view your question history and teacher responses.</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

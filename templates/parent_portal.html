@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block title %}Parent Portal | {{ site_settings.site_name|default:'Master CBC' }}{% endblock %}
+
+{% block Content %}
+<section class="lms-section pt-2">
+  <div class="lms-card p-4 p-lg-5 mb-4">
+    <span class="lms-kicker">Parent Portal</span>
+    <h1 class="display-6 fw-bold mt-3">Search learner progress by username</h1>
+    <p class="lms-muted">No login is required. Enter a student username to see subjects, grades, scores, and progress.</p>
+    <form method="get" class="row g-3 align-items-end mt-2">
+      <div class="col-md-8">
+        <label for="username" class="form-label fw-semibold">Enter Student Username</label>
+        <input type="text" id="username" name="username" value="{{ search_username }}" class="form-control" placeholder="e.g. student01">
+      </div>
+      <div class="col-md-4">
+        <button type="submit" class="lms-btn lms-btn-primary">Search Student</button>
+      </div>
+    </form>
+  </div>
+
+  {% if student_record %}
+    <div class="lms-grid-2 mb-4">
+      <div class="lms-card p-4">
+        <h2 class="h3">Student summary</h2>
+        <p class="mb-2"><strong>Username:</strong> {{ student_record.username }}</p>
+        <p class="mb-3"><strong>Overall progress:</strong> {{ overall_progress }}%</p>
+        <div class="lms-progress"><span style="width: {{ overall_progress }}%"></span></div>
+      </div>
+      <div class="lms-card p-4">
+        <h2 class="h3">Recent submissions</h2>
+        <p class="mb-0">{{ submissions|length }} tracked submission{{ submissions|length|pluralize }} found.</p>
+      </div>
+    </div>
+
+    <div class="lms-card p-4 mb-4">
+      <div class="lms-section-header">
+        <div>
+          <span class="lms-kicker">Progress</span>
+          <h2 class="h3">Subjects and performance</h2>
+        </div>
+      </div>
+      <div class="lms-grid-2">
+        {% for item in progress_summary %}
+          <div class="lms-soft-card p-4">
+            <h3 class="h4">{{ item.subject.name }}</h3>
+            <p class="lms-muted mb-2">Teacher: {{ item.subject.teacher_display_name }}</p>
+            <p class="mb-2"><strong>Latest grade:</strong> {{ item.latest_grade|default:'Not graded yet' }}</p>
+            <p class="mb-2"><strong>Scores:</strong> {% if item.scores %}{{ item.scores|join:', ' }}{% else %}No scores yet{% endif %}</p>
+            <p class="mb-2"><strong>Submitted work:</strong> {{ item.submitted }}</p>
+            <p class="mb-2"><strong>Progress:</strong> {{ item.progress }}%</p>
+            <div class="lms-progress"><span style="width: {{ item.progress }}%"></span></div>
+          </div>
+        {% empty %}
+          <div class="lms-empty">No progress data found for this learner yet.</div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="lms-card p-4">
+      <div class="table-responsive">
+        <table class="lms-table">
+          <thead>
+            <tr>
+              <th>Subject</th>
+              <th>Assignment</th>
+              <th>Status</th>
+              <th>Grade</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for submission in submissions %}
+              <tr>
+                <td>{{ submission.assignment.subject.name }}</td>
+                <td>{{ submission.assignment.title }}</td>
+                <td>{{ submission.status }}</td>
+                <td>{{ submission.grade|default:'Pending' }}</td>
+                <td>{{ submission.submitted_at|date:'M d, Y' }}</td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="5" class="lms-muted">No submissions found yet.</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,262 @@
+﻿{% extends 'base.html' %}
+{% block title %}Teacher Dashboard | {{ site_settings.site_name|default:'Master CBC' }}{% endblock %}
+
+{% block Content %}
+<section class="lms-section pt-2">
+  <div class="lms-card p-4 p-lg-5 mb-4">
+    <div class="row g-4 align-items-center">
+      <div class="col-lg-8">
+        <span class="lms-kicker">Teacher Dashboard</span>
+        <h1 class="display-6 fw-bold mt-3 mb-3">Manage learning content, notes, grading, and platform updates</h1>
+        <p class="lms-muted mb-0">This dashboard now covers subject creation, PDF notes, assignment uploads, learner questions, grading categories, homepage updates, and backend logo management.</p>
+      </div>
+      <div class="col-lg-4">
+        <div class="lms-stat-grid">
+          <div class="lms-soft-card p-3">
+            <strong>{{ subjects|length }}</strong>
+            <div class="lms-muted">Subjects</div>
+          </div>
+          <div class="lms-soft-card p-3">
+            <strong>{{ assignments|length }}</strong>
+            <div class="lms-muted">Assignments</div>
+          </div>
+          <div class="lms-soft-card p-3">
+            <strong>{{ submissions|length }}</strong>
+            <div class="lms-muted">Submissions</div>
+          </div>
+          <div class="lms-soft-card p-3">
+            <strong>{{ questions|length }}</strong>
+            <div class="lms-muted">Questions</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="lms-grid-2 mb-4">
+    <div class="lms-card lms-form-panel">
+      <div class="lms-section-header mb-3">
+        <div>
+          <span class="lms-kicker">New Subject</span>
+          <h2 class="h3">Create a subject</h2>
+        </div>
+      </div>
+      <form method="post" enctype="multipart/form-data" action="{% url 'myapp:add_subject' %}">
+        {% csrf_token %}
+        {{ subject_form.as_p }}
+        <button type="submit" class="lms-btn lms-btn-primary">Create Subject</button>
+      </form>
+    </div>
+
+    <div class="lms-card lms-form-panel">
+      <div class="lms-section-header mb-3">
+        <div>
+          <span class="lms-kicker">New Assignment</span>
+          <h2 class="h3">Upload an assignment</h2>
+        </div>
+      </div>
+      <form method="post" enctype="multipart/form-data" action="{% url 'myapp:upload_assignment' %}">
+        {% csrf_token %}
+        {{ assignment_form.as_p }}
+        <button type="submit" class="lms-btn lms-btn-primary">Upload Assignment</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="lms-grid-2 mb-4">
+    <div class="lms-card lms-form-panel">
+      <div class="lms-section-header mb-3">
+        <div>
+          <span class="lms-kicker">Branding</span>
+          <h2 class="h3">Update system logo</h2>
+        </div>
+      </div>
+      <form method="post" enctype="multipart/form-data" action="{% url 'myapp:update_branding' %}">
+        {% csrf_token %}
+        {{ site_settings_form.as_p }}
+        <button type="submit" class="lms-btn lms-btn-primary">Save Branding</button>
+      </form>
+    </div>
+
+    <div class="lms-card p-4">
+      <span class="lms-kicker">Notes by Subject</span>
+      <h2 class="h3 mt-3 mb-3">Manage PDFs and images</h2>
+      <div class="table-responsive">
+        <table class="lms-table">
+          <thead>
+            <tr>
+              <th>Subject</th>
+              <th>Teacher</th>
+              <th>Current Notes</th>
+              <th>Update</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for subject in subjects %}
+              <tr>
+                <td>{{ subject.name }}</td>
+                <td>{{ subject.teacher_display_name }}</td>
+                <td>
+                  {% if subject.notes_pdf %}
+                    <a href="{{ subject.notes_pdf.url }}" target="_blank">Current PDF</a>
+                  {% else %}
+                    <span class="lms-muted">No PDF yet</span>
+                  {% endif %}
+                </td>
+                <td>
+                  <form method="post" enctype="multipart/form-data" action="{% url 'myapp:update_subject_assets' subject.id %}" class="d-grid gap-2">
+                    {% csrf_token %}
+                    <input type="text" name="name" value="{{ subject.name }}" class="form-control" placeholder="Subject name">
+                    <textarea name="teacher_name" class="form-control" rows="2" placeholder="Enter teacher name">{{ subject.teacher_name }}</textarea>
+                    <textarea name="description" class="form-control" rows="2">{{ subject.description }}</textarea>
+                    <input type="file" name="image" class="form-control" accept="image/*">
+                    <input type="file" name="notes_pdf" class="form-control" accept="application/pdf">
+                    <button type="submit" class="lms-btn lms-btn-outline">Update Subject Assets</button>
+                  </form>
+                </td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="4" class="lms-muted">No subjects available yet.</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="lms-grid-2 mb-4">
+    <div class="lms-card lms-form-panel">
+      <div class="lms-section-header mb-3">
+        <div>
+          <span class="lms-kicker">Blog Posts</span>
+          <h2 class="h3">Add homepage blog content</h2>
+        </div>
+      </div>
+      <form method="post" enctype="multipart/form-data" action="{% url 'myapp:create_blog_post' %}">
+        {% csrf_token %}
+        {{ blog_post_form.as_p }}
+        <button type="submit" class="lms-btn lms-btn-primary">Publish Blog Post</button>
+      </form>
+      <hr>
+      <h3 class="h5">Existing posts</h3>
+      <div class="d-grid gap-3">
+        {% for post in blog_posts %}
+          <div class="lms-soft-card p-3">
+            <strong>{{ post.title }}</strong>
+            <div class="lms-muted small mb-2">{{ post.category }} - {{ post.published_at|date:'M d, Y' }}</div>
+            <a href="{% url 'myapp:edit_blog_post' post.id %}" class="lms-btn lms-btn-outline">Edit Post</a>
+          </div>
+        {% empty %}
+          <div class="lms-empty">No blog posts available yet.</div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="lms-card lms-form-panel">
+      <div class="lms-section-header mb-3">
+        <div>
+          <span class="lms-kicker">Latest Updates</span>
+          <h2 class="h3">Add system updates</h2>
+        </div>
+      </div>
+      <form method="post" action="{% url 'myapp:create_system_update' %}">
+        {% csrf_token %}
+        {{ system_update_form.as_p }}
+        <button type="submit" class="lms-btn lms-btn-primary">Publish Update</button>
+      </form>
+      <hr>
+      <h3 class="h5">Existing updates</h3>
+      <div class="d-grid gap-3">
+        {% for update in system_updates %}
+          <div class="lms-soft-card p-3">
+            <strong>{{ update.title }}</strong>
+            <div class="lms-muted small mb-2">{{ update.published_at|date:'M d, Y' }}</div>
+            <a href="{% url 'myapp:edit_system_update' update.id %}" class="lms-btn lms-btn-outline">Edit Update</a>
+          </div>
+        {% empty %}
+          <div class="lms-empty">No updates have been posted yet.</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="lms-card p-4 mb-4">
+    <div class="lms-section-header">
+      <div>
+        <span class="lms-kicker">Student Questions</span>
+        <h2 class="h3">Questions asked by learners</h2>
+      </div>
+    </div>
+    <div class="lms-grid-2">
+      {% for question in questions %}
+        <article class="lms-soft-card lms-question-card">
+          <div class="d-flex flex-wrap gap-2 mb-2">
+            <span class="lms-chip">{{ question.subject.name }}</span>
+            <span class="lms-chip">{{ question.student.username }}</span>
+          </div>
+          <p class="mb-2"><strong>Question:</strong> {{ question.question_text }}</p>
+          {% if question.teacher_response %}
+            <p class="mb-3"><strong>Response:</strong> {{ question.teacher_response }}</p>
+          {% endif %}
+          <form method="post" action="{% url 'myapp:respond_question' question.id %}">
+            {% csrf_token %}
+            <textarea name="teacher_response" rows="3" class="form-control mb-3" placeholder="Respond to the learner here...">{{ question.teacher_response }}</textarea>
+            <button type="submit" class="lms-btn lms-btn-primary">Save Response</button>
+          </form>
+        </article>
+      {% empty %}
+        <div class="lms-empty">No learner questions have been submitted yet.</div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="lms-card p-4 mb-4">
+    <div class="lms-section-header">
+      <div>
+        <span class="lms-kicker">Submissions</span>
+        <h2 class="h3">Grade assignment submissions</h2>
+      </div>
+      <a href="{% url 'myapp:teachers_delete' %}" class="lms-btn lms-btn-outline">Manage Deletes</a>
+    </div>
+    <div class="table-responsive">
+      <table class="lms-table">
+        <thead>
+          <tr>
+            <th>Student</th>
+            <th>Assignment</th>
+            <th>Status</th>
+            <th>File</th>
+            <th>Grade</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for submission in submissions %}
+            <tr>
+              <td>{{ submission.student.username }}</td>
+              <td>{{ submission.assignment.title }}</td>
+              <td>{{ submission.status }}</td>
+              <td>
+                {% if submission.image %}
+                  <a href="{{ submission.image.url }}" target="_blank">Open File</a>
+                {% else %}
+                  <span class="lms-muted">No upload</span>
+                {% endif %}
+              </td>
+              <td>{{ submission.grade|default:'Not graded' }}</td>
+              <td><a href="{% url 'myapp:grade_submission' submission.id %}" class="lms-btn lms-btn-primary">Grade</a></td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="6" class="lms-muted">No submissions yet.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+{% endblock %}
+

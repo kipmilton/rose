@@ -1,0 +1,55 @@
+{% load static %}
+<header id="header" class="header position-relative">
+  <div class="container-fluid container-xl position-relative py-3">
+    <div class="top-row d-flex align-items-center justify-content-between gap-3">
+      <a href="{% url 'myapp:home_page' %}" class="logo d-flex align-items-center gap-3 text-decoration-none">
+        {% if site_settings.logo %}
+          <img src="{{ site_settings.logo.url }}" alt="{{ site_settings.site_name }} logo">
+        {% else %}
+          <img src="{% static 'assets/img/logo.png' %}" alt="{{ site_settings.site_name|default:'Master CBC' }} logo">
+        {% endif %}
+        <div>
+          <h1 class="sitename mb-0">{{ site_settings.site_name|default:'Master CBC' }}</h1>
+          <small class="lms-muted">School Learning Management Dashboard</small>
+        </div>
+      </a>
+
+      <a href="{% url 'myapp:parent_portal' %}" class="lms-btn lms-btn-warm parent-link d-none d-md-inline-flex">
+        <i class="bi bi-people"></i>
+        Parent Access
+      </a>
+    </div>
+  </div>
+
+  <div class="nav-wrap">
+    <div class="container d-flex justify-content-center position-relative">
+      <nav id="navmenu" class="navmenu">
+        <ul>
+          <li><a href="{% url 'myapp:home_page' %}" class="active">Home</a></li>
+          <li><a href="{% url 'myapp:subjects_page' %}">Subjects</a></li>
+          <li><a href="{% url 'myapp:about' %}">About</a></li>
+          <li><a href="{% url 'myapp:parent_portal' %}" class="parent-link">Parent Portal</a></li>
+          {% if user.is_authenticated and user.is_staff or user.is_superuser %}
+            <li><a href="{% url 'myapp:teachers_dashboard' %}">Teacher Dashboard</a></li>
+          {% endif %}
+          <li class="dropdown">
+            <a href="#"><span>{% if user.is_authenticated %}{{ user.username }}{% else %}Account{% endif %}</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+            <ul>
+              {% if user.is_authenticated %}
+                <li><a href="{% url 'myapp:subjects_page' %}">Learner Area</a></li>
+                {% if user.is_staff or user.is_superuser %}
+                  <li><a href="{% url 'myapp:teachers_dashboard' %}">Admin Section</a></li>
+                {% endif %}
+                <li><a href="{% url 'myapp:logout' %}">Logout</a></li>
+              {% else %}
+                <li><a href="{% url 'myapp:login_page' %}">Login</a></li>
+                <li><a href="{% url 'myapp:register' %}">Register</a></li>
+              {% endif %}
+            </ul>
+          </li>
+        </ul>
+        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+      </nav>
+    </div>
+  </div>
+</header>

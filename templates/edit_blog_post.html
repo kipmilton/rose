@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Edit Blog Post | {{ site_settings.site_name|default:'Master CBC' }}{% endblock %}
+
+{% block Content %}
+<section class="lms-section pt-2">
+  <div class="lms-card lms-form-panel">
+    <span class="lms-kicker">Edit Blog Post</span>
+    <h1 class="h2 mt-3 mb-3">{{ post.title }}</h1>
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <div class="d-flex flex-wrap gap-3 mt-3">
+        <button type="submit" class="lms-btn lms-btn-primary">Save Changes</button>
+        <a href="{% url 'myapp:teachers_dashboard' %}" class="lms-btn lms-btn-outline">Back to Dashboard</a>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}
