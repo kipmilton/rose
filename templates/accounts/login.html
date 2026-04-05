@@ -21,8 +21,8 @@
               <form action="{% url 'myapp:login_page' %}" method="POST">
                 {% csrf_token %}                
                 <div class="form-group mb-3">
-                  <label for="username" class="form-label">Username</label>
-                  <input type="text" class="form-control" id="username" name="username" placeholder="Enter your username" required>
+                  <label for="username" class="form-label">Sudent Admission No./Username</label>
+                  <input type="text" class="form-control" id="username" name="username" placeholder="Enter your admission no./username" required>
                 </div>
                 <div class="form-group mb-3">
                   <label for="password" class="form-label">Password</label>
@@ -37,7 +37,7 @@
                 </div>
               </form>
               <div class="text-center mt-3">
-                <button><a href="#">Forgot password?</a></button><br>
+                <button><a href="#"></a></button><br>
                 <a href="{% url 'myapp:register' %}">Create an account</a>
               </div>
             </div>

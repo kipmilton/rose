@@ -5,12 +5,12 @@
 <section class="lms-section pt-2">
   <div class="lms-card p-4 p-lg-5 mb-4">
     <span class="lms-kicker">Parent Portal</span>
-    <h1 class="display-6 fw-bold mt-3">Search learner progress by username</h1>
-    <p class="lms-muted">No login is required. Enter a student username to see subjects, grades, scores, and progress.</p>
+    <h1 class="display-6 fw-bold mt-3">Search learner progress by admission number</h1>
+    <p class="lms-muted">No login is required. Enter a student admission number to see subjects, grades, scores, and progress.</p>
     <form method="get" class="row g-3 align-items-end mt-2">
       <div class="col-md-8">
-        <label for="username" class="form-label fw-semibold">Enter Student Username</label>
-        <input type="text" id="username" name="username" value="{{ search_username }}" class="form-control" placeholder="e.g. student01">
+        <label for="username" class="form-label fw-semibold">Enter Student Admission No.</label>
+        <input type="text" id="username" name="username" value="{{ search_username }}" class="form-control" placeholder="e.g. ADM001">
       </div>
       <div class="col-md-4">
         <button type="submit" class="lms-btn lms-btn-primary">Search Student</button>
@@ -22,9 +22,9 @@
     <div class="lms-grid-2 mb-4">
       <div class="lms-card p-4">
         <h2 class="h3">Student summary</h2>
-        <p class="mb-2"><strong>Username:</strong> {{ student_record.username }}</p>
+        <p class="mb-2"><strong>Admission No.:</strong> {{ student_record.username }}</p>
         <p class="mb-3"><strong>Overall progress:</strong> {{ overall_progress }}%</p>
-        <div class="lms-progress"><span style="width: {{ overall_progress }}%"></span></div>
+        <div class="lms-progress"><span data-width="{{ progress_width }}"></span></div>
       </div>
       <div class="lms-card p-4">
         <h2 class="h3">Recent submissions</h2>
@@ -48,7 +48,7 @@
             <p class="mb-2"><strong>Scores:</strong> {% if item.scores %}{{ item.scores|join:', ' }}{% else %}No scores yet{% endif %}</p>
             <p class="mb-2"><strong>Submitted work:</strong> {{ item.submitted }}</p>
             <p class="mb-2"><strong>Progress:</strong> {{ item.progress }}%</p>
-            <div class="lms-progress"><span style="width: {{ item.progress }}%"></span></div>
+            <div class="lms-progress"><span data-width="{{ item.progress_width }}"></span></div>
           </div>
         {% empty %}
           <div class="lms-empty">No progress data found for this learner yet.</div>
@@ -88,4 +88,11 @@
     </div>
   {% endif %}
 </section>
+
+<script>
+  document.querySelectorAll('.lms-progress > span[data-width]').forEach(span => {
+    span.style.width = span.getAttribute('data-width') + '%';
+  });
+</script>
+
 {% endblock %}

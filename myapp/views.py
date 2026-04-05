@@ -190,7 +190,7 @@ def subject_detail(request, id):
             question.student = request.user
             question.save()
             messages.success(request, 'Your question has been sent to the teacher.')
-            return redirect('myapp:subject_detail', id=subject.id)
+            return redirect('myapp:subject_detail', id=subject.pk)
     else:
         question_form = SubjectQuestionForm()
 
@@ -421,6 +421,7 @@ def parent_portal(request):
     submissions = Submission.objects.none()
     progress_summary = []
     overall_progress = None
+    progress_width = '0%'
 
     if username:
         student_record = User.objects.filter(username=username).first()
@@ -434,21 +435,30 @@ def parent_portal(request):
             else:
                 overall_progress = 0
 
+            progress_width = f'{overall_progress}%'
+
             for subject in subjects:
                 subject_assignments = Assignment.objects.filter(subject=subject).count()
                 subject_submissions = submissions.filter(assignment__subject=subject)
                 subject_completed = subject_submissions.filter(status='Completed').count()
+                progress = round((subject_completed / subject_assignments) * 100) if subject_assignments else 0
+                
+                # Get the latest submission to safely access grade
+                latest_submission = subject_submissions.first()
+                latest_grade = latest_submission.grade if latest_submission else None
+                
                 progress_summary.append(
                     {
                         'subject': subject,
                         'scores': [item.grade for item in subject_submissions if item.grade],
-                        'latest_grade': subject_submissions.first().grade if subject_submissions.exists() else None,
+                        'latest_grade': latest_grade,
                         'submitted': subject_submissions.count(),
-                        'progress': round((subject_completed / subject_assignments) * 100) if subject_assignments else 0,
+                        'progress': progress,
+                        'progress_width': f'{progress}%',
                     }
                 )
         else:
-            messages.error(request, 'No student found with that username.')
+            messages.error(request, 'No student found with that admission number.')
 
     return render(
         request,
@@ -459,6 +469,7 @@ def parent_portal(request):
             'submissions': submissions,
             'progress_summary': progress_summary,
             'overall_progress': overall_progress,
+            'progress_width': progress_width,
             'search_username': username,
         },
     )

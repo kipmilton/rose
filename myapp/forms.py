@@ -66,6 +66,9 @@ class RegisterForm(forms.ModelForm):
         widgets = {
             'username': forms.TextInput(attrs={'class': INPUT_CLASS}),
         }
+        labels = {
+            'username': 'Admission No./Username',
+        }
 
     def clean(self):
         cleaned_data = super().clean()
