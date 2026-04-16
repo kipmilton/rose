@@ -26,7 +26,12 @@
                 </div>
                 <div class="form-group mb-3">
                   <label for="password" class="form-label">Password</label>
-                  <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+                  <div class="position-relative">
+                    <input type="password" class="form-control password-input" id="password" name="password" placeholder="Enter your password" required>
+                    <button type="button" class="btn btn-sm position-absolute end-0 top-50 translate-middle-y" style="border: none; background: none; padding: 0.5rem;" onclick="togglePasswordVisibility('password')">
+                      <i class="bi bi-eye-fill" id="password-icon" style="font-size: 1rem;">👀</i>
+                    </button>
+                  </div>
                 </div>
                 <div class="form-group form-check mb-3">
                   <input type="checkbox" class="form-check-input" id="rememberMe" name="rememberMe">
@@ -46,4 +51,30 @@
       </div>
     </div>
   </section>
+
+  <style>
+    .password-toggle-btn {
+      cursor: pointer;
+      color: #6c757d;
+      transition: color 0.3s ease;
+    }
+    .password-toggle-btn:hover {
+      color: #0d6efd;
+    }
+  </style>
+
+  <script>
+    function togglePasswordVisibility(fieldId) {
+      const input = document.getElementById(fieldId);
+      const icon = document.getElementById(fieldId + '-icon');
+      
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.textContent = '🙈';
+      } else {
+        input.type = 'password';
+        icon.textContent = '👀';
+      }
+    }
+  </script>
 {% endblock %}
